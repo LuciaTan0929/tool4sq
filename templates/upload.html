@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据上传 - 耳机音质对比工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🎧 耳机音质对比工具</h1>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">搜索对比</a></li>
+                <li><a href="{{ url_for('upload') }}" class="active">数据上传</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- 专业格式快速上传 -->
+        <section class="upload-section professional-upload">
+            <h2>🚀 快速上传 - 专业声学测试格式</h2>
+            <p class="info-text">
+                上传包含 Response、THD、Rub & Buzz 数据的完整测试文件（.txt格式）<br>
+                <strong>支持格式：</strong>制表符分隔的多列数据，包含 "s/n:" 型号标识<br>
+                <strong>✨ 支持批量上传：</strong>一个文件可包含多个耳机的数据，系统会自动识别并分别上传
+            </p>
+
+            <div class="professional-upload-box">
+                <input type="file" id="professionalFile" accept=".txt" style="display: none;">
+                <button type="button" id="professionalUploadBtn" class="professional-btn">
+                    📁 选择专业格式文件
+                </button>
+                <div id="professionalFileName" class="file-name-display"></div>
+
+                <!-- 归一化选项 -->
+                <div class="professional-normalization" style="display: none; margin-top: 1rem;">
+                    <label style="color: white; font-weight: 600; display: block; margin-bottom: 0.5rem;">频响数据归一化:</label>
+                    <select id="professionalNormalization" style="width: 100%; padding: 0.6rem; border-radius: 8px; border: none;">
+                        <option value="normalize-keep">归一化并保留原始数据</option>
+                        <option value="no-normalize">不归一化</option>
+                        <option value="normalize-only">仅归一化</option>
+                    </select>
+                </div>
+
+                <button type="button" id="professionalSubmitBtn" class="submit-btn" style="display: none; margin-top: 1rem;">
+                    ✅ 确认上传
+                </button>
+            </div>
+            <div id="professionalMessage" class="message"></div>
+        </section>
+
+        <div class="divider">
+            <span>或</span>
+        </div>
+
+        <section class="upload-section">
+            <h2>📝 手动输入数据</h2>
+            <p class="info-text">手动填写耳机基本信息并输入测量数据。</p>
+
+            <form id="uploadForm" class="upload-form">
+                <!-- 基本信息 -->
+                <div class="form-group">
+                    <label for="brandInput">品牌 *</label>
+                    <input type="text" id="brandInput" required placeholder="例: Sony">
+                </div>
+
+                <div class="form-group">
+                    <label for="modelInput">型号 *</label>
+                    <input type="text" id="modelInput" required placeholder="例: WH-1000XM5">
+                </div>
+
+                <div class="form-group">
+                    <label for="typeInput">类型</label>
+                    <select id="typeInput">
+                        <option value="over-ear">头戴式 (Over-Ear)</option>
+                        <option value="in-ear">入耳式 (In-Ear)</option>
+                        <option value="on-ear">耳挂式 (On-Ear)</option>
+                        <option value="open-back">开放式 (Open-Back)</option>
+                        <option value="closed-back">封闭式 (Closed-Back)</option>
+                        <option value="sleep">睡眠耳机 (Sleep)</option>
+                        <option value="bone-conduction">骨传导 (Bone Conduction)</option>
+                        <option value="other">其他 (Other)</option>
+                    </select>
+                </div>
+
+                <!-- 归一化选项 -->
+                <div class="form-group">
+                    <label>频响数据归一化选项</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="normalization" value="normalize-keep" checked>
+                            <span>归一化并保留原始数据</span>
+                            <small>推荐：便于对比，同时保留原始数据</small>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="normalization" value="no-normalize">
+                            <span>不归一化</span>
+                            <small>保持原始SPL值</small>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="normalization" value="normalize-only">
+                            <span>仅归一化（不保留原始数据）</span>
+                            <small>节省存储空间</small>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 频响数据 -->
+                <div class="form-group">
+                    <label for="frequencyData">频响数据 (Frequency Response) *</label>
+                    <textarea id="frequencyData" rows="4" required
+                        placeholder="格式: 频率(Hz),增益(dB) 每行一组
+例:
+20,-5
+30,-3
+40,-2"></textarea>
+                    <small>或上传CSV文件:</small>
+                    <input type="file" id="frequencyFile" accept=".csv,.txt">
+                </div>
+
+                <!-- THD数据 -->
+                <div class="form-group">
+                    <label for="thdData">THD数据 (Total Harmonic Distortion)</label>
+                    <textarea id="thdData" rows="4"
+                        placeholder="格式: 频率(Hz),失真(%) 每行一组
+例:
+20,0.5
+30,0.3
+40,0.2"></textarea>
+                    <small>或上传CSV文件:</small>
+                    <input type="file" id="thdFile" accept=".csv,.txt">
+                </div>
+
+                <!-- R&B数据 -->
+                <div class="form-group">
+                    <label for="rnbData">R&B数据</label>
+                    <textarea id="rnbData" rows="4"
+                        placeholder="格式: 频率(Hz),值 每行一组
+例:
+20,80
+30,82
+40,85"></textarea>
+                    <small>或上传CSV文件:</small>
+                    <input type="file" id="rnbFile" accept=".csv,.txt">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">📤 上传数据</button>
+                    <button type="reset" class="reset-btn">🔄 重置</button>
+                </div>
+            </form>
+
+            <div id="uploadMessage" class="message"></div>
+        </section>
+
+        <!-- 已上传数据列表 -->
+        <section class="uploaded-data-section">
+            <h2>已上传的数据</h2>
+            <div id="uploadedList" class="uploaded-list"></div>
+        </section>
+    </main>
+
+    <!-- 重命名模态框 -->
+    <div id="renameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ 重命名耳机</h2>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="renameBrand">品牌 *</label>
+                    <input type="text" id="renameBrand" placeholder="例: Sony" required>
+                </div>
+                <div class="form-group">
+                    <label for="renameModel">型号 *</label>
+                    <input type="text" id="renameModel" placeholder="例: WH-1000XM5" required>
+                </div>
+                <div class="form-group">
+                    <label for="renameType">类型</label>
+                    <select id="renameType">
+                        <option value="over-ear">头戴式 (Over-Ear)</option>
+                        <option value="in-ear">入耳式 (In-Ear)</option>
+                        <option value="on-ear">耳挂式 (On-Ear)</option>
+                        <option value="open-back">开放式 (Open-Back)</option>
+                        <option value="closed-back">封闭式 (Closed-Back)</option>
+                        <option value="sleep">睡眠耳机 (Sleep)</option>
+                        <option value="bone-conduction">骨传导 (Bone Conduction)</option>
+                        <option value="other">其他 (Other)</option>
+                    </select>
+                </div>
+                <div id="renameMessage" class="message"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="renameConfirmBtn" class="submit-btn">✅ 确认修改</button>
+                <button id="renameCancelBtn" class="clear-btn">❌ 取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/data.js') }}?v=6"></script>
+    <script src="{{ url_for('static', filename='js/upload.js') }}?v=6"></script>
+</body>
+</html>

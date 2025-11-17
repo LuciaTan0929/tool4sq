@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>耳机音质对比工具</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">🎧 耳机音质对比工具</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">搜索对比</a></li>
+                <li><a href="upload.html">数据上传</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- 搜索区域 -->
+        <section class="search-section">
+            <h2>搜索耳机</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入品牌或型号 (如: Sony WH-1000XM4)">
+                <button id="searchBtn">🔍 搜索</button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+        </section>
+
+        <!-- 已选择的耳机 -->
+        <section class="selected-section">
+            <h2>已选择的耳机 <span id="selectedCount">(0)</span></h2>
+            <div id="selectedHeadphones" class="selected-headphones"></div>
+            <button id="compareBtn" class="compare-btn" disabled>开始对比</button>
+            <button id="clearBtn" class="clear-btn">清除所有</button>
+        </section>
+
+        <!-- 对比图表区域 -->
+        <section id="comparisonSection" class="comparison-section" style="display: none;">
+            <h2>对比结果</h2>
+
+            <!-- 目标曲线选项 -->
+            <div class="target-curves">
+                <h3>目标曲线对比</h3>
+                <label><input type="checkbox" class="target-curve" value="harman"> 哈曼曲线 (Harman)</label>
+                <label><input type="checkbox" class="target-curve" value="ief"> IEF Target</label>
+                <label><input type="checkbox" class="target-curve" value="freefield"> 自由场 (Free Field)</label>
+                <label><input type="checkbox" class="target-curve" value="diffusefield"> 扩散场 (Diffuse Field)</label>
+            </div>
+
+            <!-- 频响曲线图 -->
+            <div class="chart-container">
+                <h3>频响曲线 (Frequency Response)</h3>
+                <canvas id="frequencyChart"></canvas>
+            </div>
+
+            <!-- THD曲线图 -->
+            <div class="chart-container">
+                <h3>总谐波失真 (THD)</h3>
+                <canvas id="thdChart"></canvas>
+            </div>
+
+            <!-- R&B曲线图 -->
+            <div class="chart-container">
+                <h3>R&B 参数</h3>
+                <canvas id="rnbChart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script src="data.js"></script>
+    <script src="targetCurves.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
