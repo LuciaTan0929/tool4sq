@@ -1,0 +1,24 @@
+{
+  "name": "tool4sq",
+  "description": "Headphone audio comparison tool",
+  "keywords": ["python", "flask", "audio", "headphone"],
+  "website": "https://github.com/LuciaTan0929/tool4sq",
+  "repository": "https://github.com/LuciaTan0929/tool4sq",
+  "success_url": "/",
+  "env": {
+    "PORT": {
+      "description": "Port number for the application",
+      "value": "5000"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
